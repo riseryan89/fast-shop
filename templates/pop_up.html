@@ -1,0 +1,28 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<body style="padding: 0; margin: 0" id="popup">
+
+  <a href="{{ pop_up.target_url }}" target="_blank">
+    <img src="{{ pop_up.photo.url }}" />
+  </a>
+  <div class="mb-1 mt-1">
+    <a class="btn btn-outline-danger ml-1 btn-sm" href="#" onclick="todaycloseWin();">오늘 하루 열지 않기</a>
+    <a class="btn btn-outline-primary btn-sm" href="#" onclick="closeWin();">닫기</a>
+  </div>
+</body>
+
+<script>
+  function setCookie( name, value, expiredays ) {
+    var todayDate = new Date();
+    todayDate.setDate( todayDate.getDate() + expiredays );
+    document.cookie = name + "=" + escape( value ) + "; path=/; expires=" + todayDate.toUTCString() + ";"
+  }
+  function closeWin() {
+	  document.getElementById('popup').style.display = "none";    // 팝업창 아이디
+    window.close();
+  }
+  function todaycloseWin() {
+	  setCookie('popup_id_{{ pop_up.id }}', true, 1)
+    window.close();
+  }
+</script>
+

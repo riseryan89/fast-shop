@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title%}Home{% endblock %}
+{% block content %}
+
+<div class="row" id="vue_div">
+  <div class="col-xl-12">
+    <div class="card" style="background-color: #dbe3f1">
+      <div class="card-header border-0">
+        <span class="text-lg font-weight-bold">{{ product.name }}</span> <span class="badge badge-primary">{{ product.category.name }}</span>
+      </div>
+      <div class="card-body">
+        <!-- Projects table -->
+        <div class="row p-2">
+          <div class="col-4">
+            <div class="card">
+              <img src="{{ product.photo.url }}">
+            </div>
+          </div>
+          <div class="col-8">
+            <h1>{{ product.name }}</h1>
+            <h3>₩{{ product.amount|intcomma }}</h3>
+            <div>
+              <a class="btn btn-warning" href="#">장바구니 담기</a>
+              <a class="btn btn-primary" href="#">바로 구매</a>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="card h-100">
+              <div class="card-body h-100">
+                {{ product.content|safe }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let vm = new Vue({
+    delimiters: ['[[', ']]'],
+    el: '#vue_div',
+    data: {
+      newUrlName: null,
+      newUrlTarget: null,
+      urlLists: []
+    },
+    mounted() {
+
+    },
+    methods: {
+      showImgWin: function open_image(str, w, h){ //이미지 크기에 맞는 팝업 열기
+        var sv = "no";
+        var imgW = w;
+        var imgH = h+45;
+        if(imgW > screen.width-10){
+         imgW = screen.width-10; sv="yes";
+        }
+        if(imgH > screen.height-30){
+         imgH = screen.height-30; sv="yes";
+        }
+        let winopt = "scrollbars=" + sv + ",resizable=yes,width=" + imgW + ",height=" + imgH + ",left=0,top=0,location=no";
+        window.open("" + str,"",winopt);
+      }
+    }
+})
+</script>
+<script language="JavaScript">
+
+</script>
+
+{% endblock %}

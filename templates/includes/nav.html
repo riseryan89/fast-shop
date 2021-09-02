@@ -1,0 +1,59 @@
+{% load static %}
+<!-- Sidenav -->
+<nav
+  class="
+    sidenav
+    navbar navbar-vertical
+    fixed-left
+    navbar-expand-xs navbar-light
+    bg-white
+  "
+  id="sidenav-main"
+>
+  <div class="scrollbar-inner">
+    <!-- Brand -->
+    <div class="sidenav-header d-flex align-items-center">
+      <a class="navbar-brand" href="#">
+        <img
+          src="{% static 'assets/img/fastshop-logo.png' %}"
+          height="40"
+          class="navbar-brand-img"
+          alt="..."
+        />
+      </a>
+      <div class="ml-auto">
+        <!-- Sidenav toggler -->
+        <div
+          class="sidenav-toggler d-none d-xl-block"
+          data-action="sidenav-unpin"
+          data-target="#sidenav-main"
+        >
+          <div class="sidenav-toggler-inner">
+            <i class="sidenav-toggler-line"></i>
+            <i class="sidenav-toggler-line"></i>
+            <i class="sidenav-toggler-line"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="navbar-inner">
+      <!-- Nav items -->
+      <ul class="navbar-nav">
+        <a href="{% url 'index' %}">
+          <li class="nav-item nav-link">
+            <i class="ni ni-shop text-primary"></i>
+            <span class="nav-link-text">홈</span>
+          </li>
+        </a>
+        {% for c in category %}
+        <a href="{% url 'index' %}?category={{ c.id }}">
+          <li class="nav-item nav-link">
+            <i class="{{ c.icon }} text-primary"></i>
+            <span class="nav-link-text">{{ c.name }}</span>
+          </li>
+        </a>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</nav>

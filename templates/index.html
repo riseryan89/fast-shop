@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title%}Home{% endblock %}
+{% block content %}
+
+<div class="row" id="vue_div">
+  <div class="col-xl-12">
+    <div class="card" style="background-color: #dbe3f1">
+      <div class="card-header border-0">
+        {% if category_obj %}
+          {{ category_obj.name }}
+        {% else %}
+          Special
+        {% endif %}
+      </div>
+      <div class="card-body">
+        <!-- Projects table -->
+        <div class="row p-2">
+          {% for p in product %}
+          <div class="col-3">
+          <a href="{% url 'product_detail' product_id=p.id %}">
+            <div class="card p-2 border">
+              <img src="{{ p.photo.url }}" style="max-height: 300px;">
+              <div class=" ml-1">
+                <span class="font-weight-bold">{{ p.name }}</span>
+                <p class="font-weight-bold text-right">₩{{ p.amount|intcomma }}</p>
+              </div>
+            </div>
+          </a>
+          </div>
+          {% endfor %}
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let vm = new Vue({
+    delimiters: ['[[', ']]'],
+    el: '#vue_div',
+    data: {
+      newUrlName: null,
+      newUrlTarget: null,
+      urlLists: []
+    },
+    mounted() {
+      {% for img in pop_up %}
+          const popup_id_{{ img.id }} = getCookie("popup_id_{{ img.id }}")
+          if (popup_id_{{ img.id }} === null) {
+            this.showImgWin("http://127.0.0.1:8000{% url 'get_pop_up' pop_up_id=img.id %}", {{ img.width }}, {{ img.height }})
+          }
+      {% endfor %}
+    },
+    methods: {
+      showImgWin: function open_image(str, w, h){ //이미지 크기에 맞는 팝업 열기
+        var sv = "no";
+        var imgW = w;
+        var imgH = h+45;
+        if(imgW > screen.width-10){
+         imgW = screen.width-10; sv="yes";
+        }
+        if(imgH > screen.height-30){
+         imgH = screen.height-30; sv="yes";
+        }
+        let winopt = "scrollbars=" + sv + ",resizable=yes,width=" + imgW + ",height=" + imgH + ",left=0,top=0,location=no";
+        window.open("" + str,"",winopt);
+      }
+    }
+})
+</script>
+<script language="JavaScript">
+
+</script>
+
+{% endblock %}
