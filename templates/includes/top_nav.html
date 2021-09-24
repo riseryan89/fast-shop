@@ -2,7 +2,7 @@
 <nav
   class="navbar navbar-top navbar-expand navbar-dark bg-primary border-bottom"
 >
-  <div class="container-fluid">
+  <div class="container-fluid" id="top_nav_vue_div">
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <!-- Navbar links -->
       <ul class="navbar-nav align-items-center ml-md-auto">
@@ -29,7 +29,12 @@
             aria-haspopup="true"
             aria-expanded="false"
           >
-            <i class="ni ni-cart"></i>
+            <i class="ni ni-cart">
+              <span v-if="cart.length > 0" class="text-xs"
+                  style="position: absolute; top: -14px;right: -11px;padding: 3px 3px;border-radius: 50%;background: red;color: white;">
+                    [[ cart.length ]]
+              </span>
+            </i>
           </a>
           <div
             class="
@@ -42,18 +47,18 @@
             <div class="px-3 py-3">
               <h6 class="text-sm text-muted m-0">
                 You have
-                <strong class="text-primary">13</strong> notifications.
+                <strong class="text-primary">[[ cart.length ]]</strong>개 상품이 있습니다.
               </h6>
             </div>
             <!-- List group -->
             <div class="list-group list-group-flush">
-              <a href="#!" class="list-group-item list-group-item-action">
+              <a v-for="i in cart" :href="'/product/' + i.id" class="list-group-item list-group-item-action">
                 <div class="row align-items-center">
                   <div class="col-auto">
                     <!-- Avatar -->
                     <img
                       alt="Image placeholder"
-                      src="{% static 'assets/img/theme/team-1.jpg' %}"
+                      :src="i.photo"
                       class="avatar rounded-circle"
                     />
                   </div>
@@ -62,14 +67,14 @@
                       class="d-flex justify-content-between align-items-center"
                     >
                       <div>
-                        <h4 class="mb-0 text-sm">John Snow</h4>
+                        <h4 class="mb-0 text-sm">[[i.name]]</h4>
                       </div>
                       <div class="text-right text-muted">
-                        <small>2 hrs ago</small>
+                        <small>[[i.count]]개</small>
                       </div>
                     </div>
                     <p class="text-sm mb-0">
-                      Let's meet at Starbucks at 11:30. Wdyt?
+                      ₩[[i.price|tc]]
                     </p>
                   </div>
                 </div>
@@ -77,14 +82,14 @@
             </div>
             <!-- View all -->
             <a
-              href="#!"
+              href="{% url 'order_detail' %}"
               class="
                 dropdown-item
                 text-center text-primary
                 font-weight-bold
                 py-3
               "
-              >View all</a
+              >구매하기</a
             >
           </div>
         </li>
@@ -142,4 +147,64 @@
       </ul>
     </div>
   </div>
+  <script>
+    let top_nav_vm = new Vue({
+        delimiters: ['[[', ']]'],
+        el: '#top_nav_vue_div',
+        data: {
+            cart: [],
+        },
+        mounted () {
+          this.get_cart_item()
+        },
+        methods: {
+            get_cart_item: function () {
+                let cart_items = window.sessionStorage.getItem("cart");
+                if (cart_items != null) {
+                  this.cart =JSON.parse(cart_items);
+                }
+            },
+            set_cart_item: function (id, photo, name, price) {
+                const body = {
+                    id: id,
+                    photo: photo,
+                    name: name,
+                    count: 1,
+                    price: price
+                }
+
+                let current_cart = [];
+                const cart_items = sessionStorage.getItem("cart");
+                let has_one = false
+                if (cart_items != null) {
+                  current_cart = JSON.parse(cart_items);
+                }
+                for (let i = 0; i < this.cart.length; i++) {
+                  let item = this.cart[i];
+                  if (item.id === id) {
+                      has_one = true
+                      item.count += 1;
+                      sessionStorage.setItem("cart", JSON.stringify(this.cart));
+                  }
+                }
+                top_nav_vm.cart = current_cart;
+                if (this.cart.length === 0 || !has_one) {
+                    current_cart.push(body);
+                    top_nav_vm.cart = current_cart;
+                    sessionStorage.setItem("cart", JSON.stringify(current_cart));
+                }
+                this.get_cart_item();
+
+
+
+
+            }
+        },
+        filters: {
+          tc: function (v) {
+            return !v ? v : v.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+          },
+        }
+    })
+  </script>
 </nav>

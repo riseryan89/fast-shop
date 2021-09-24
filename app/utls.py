@@ -14,8 +14,6 @@ def save_delivery_company():
     uri = f"https://info.sweettracker.co.kr/api/v1/companylist?t_key={ST_API}"
     res = requests.get(uri)
     header = {"accept":  "application/json;charset=UTF-8"}
-    print(res.json())
-    print(ST_API)
     company = res.json().get("Company")
     for c in company:
         DeliveryCompany.objects.create(code=c.get("Code"), name=c.get("Name"))

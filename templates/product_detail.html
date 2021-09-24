@@ -3,7 +3,19 @@
 {% load humanize %}
 {% block title%}Home{% endblock %}
 {% block content %}
-
+<!-- Core Stylesheet -->
+<script src="{% static 'assets/js/components/rating/js/star-rating.min.js' %}"></script>
+<script src="{% static 'assets/js/components/rating/js/star-rating.min.js' %}"></script>
+<link href="{% static 'assets/js/components/rating/css/star-rating.min.css' %}" rel="stylesheet" />
+<script src="{% static 'assets/js/components/rating/themes/krajee-fa/theme.min.js' %}"></script>
+<script src="{% static 'assets/js/components/rating/themes/krajee-fas/theme.min.js' %}"></script>
+<script src="{% static 'assets/js/components/rating/themes/krajee-svg/theme.min.js' %}"></script>
+<script src="{% static 'assets/js/components/rating/themes/krajee-uni/theme.min.js' %}"></script>
+<link href="{% static 'assets/js/components/rating/themes/krajee-fa/theme.min.css' %}" rel="stylesheet" />
+<link href="{% static 'assets/js/components/rating/themes/krajee-fas/theme.min.css' %}" rel="stylesheet" />
+<link href="{% static 'assets/js/components/rating/themes/krajee-svg/theme.min.css' %}" rel="stylesheet" />
+<link href="{% static 'assets/js/components/rating/themes/krajee-uni/theme.min.css' %}" rel="stylesheet" />
+<!-- krajee-fa Theme -->
 <div class="row" id="vue_div">
   <div class="col-xl-12">
     <div class="card" style="background-color: #dbe3f1">
@@ -22,7 +34,7 @@
             <h1>{{ product.name }}</h1>
             <h3>₩{{ product.amount|intcomma }}</h3>
             <div>
-              <a class="btn btn-warning" href="#">장바구니 담기</a>
+              <a class="btn btn-warning" @click="add_cart({{ product.id }}, '{{ product.photo.url }}', '{{ product.name }}', {{ product.amount }})">장바구니 담기</a>
               <a class="btn btn-primary" href="#">바로 구매</a>
             </div>
           </div>
@@ -34,7 +46,35 @@
             </div>
           </div>
         </div>
+      <div class="card-body">
+        <!-- Projects table -->
+        <div class="table-responsive">
+        <!-- Projects table -->
+          <table class="table align-items-center table-flush">
+            <thead class="thead-light text-center">
+              <tr>
+                <th scope="col">별점</th>
+                <th scope="col">작성자</th>
+                <th scope="col">내용</th>
+              </tr>
 
+            </thead>
+            <tbody>
+            {% for r in ratings %}
+              <tr>
+                <td class="font-weight-bold">
+                  <input id="rating-system" type="number" class="rating" min="0" max="5" step="1" value="{{ r.rating }}">
+                </td>
+
+                <td>{{ r.user.username }}</td>
+                <td>{{ r.content|safe }}</td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+      </div>
 
       </div>
     </div>
@@ -51,7 +91,7 @@ let vm = new Vue({
       urlLists: []
     },
     mounted() {
-
+        $(".rating").rating('refresh',{displayOnly: true, size: 'sm'})
     },
     methods: {
       showImgWin: function open_image(str, w, h){ //이미지 크기에 맞는 팝업 열기
@@ -66,6 +106,9 @@ let vm = new Vue({
         }
         let winopt = "scrollbars=" + sv + ",resizable=yes,width=" + imgW + ",height=" + imgH + ",left=0,top=0,location=no";
         window.open("" + str,"",winopt);
+      },
+      add_cart: function (id, photo, name, price) {
+          top_nav_vm.set_cart_item(id, photo, name, price)
       }
     }
 })

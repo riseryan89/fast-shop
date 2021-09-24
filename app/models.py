@@ -66,6 +66,7 @@ class Rating (TimeStampedModel):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     rating = models.IntegerField()
+    content = models.TextField()
 
     def __str__(self):
         return f"[{self.product.name}] by {self.user} ({self.rating}점)"
@@ -88,6 +89,7 @@ class ProductOption(TimeStampedModel):
 
 class PopUp(TimeStampedModel):
     photo = models.ImageField(upload_to="pop_up")
+    name = models.CharField(max_length=20, null=True)
     width = models.IntegerField(null=True, blank=True)
     height = models.IntegerField(null=True, blank=True)
     target_url = models.CharField(max_length=2000, null=True)
@@ -97,6 +99,9 @@ class PopUp(TimeStampedModel):
         img = Image.open(self.photo)
         self.width, self.height = img.size
         super().save(*args, **kwargs)  # 실제 save() 를 호출
+
+    def __str__(self):
+        return f"{self.name} ({self.width}X{self.height})"
 
 
 class ShoppingCart(TimeStampedModel):

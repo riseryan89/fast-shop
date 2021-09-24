@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title%}Home{% endblock %}
+{% block content %}
+
+<div class="row" id="vue_div">
+  <div class="col-xl-12">
+    <div class="card" style="background-color: #dbe3f1">
+      <div class="card-header border-0">
+          Order
+      </div>
+      <div class="card-body">
+        <!-- Projects table -->
+        <div class="table-responsive">
+        <!-- Projects table -->
+          <table class="table align-items-center table-flush">
+            <thead class="thead-light text-center">
+              <tr>
+                <th scope="col">상품명</th>
+                <th scope="col">단가</th>
+                <th scope="col">수량</th>
+                <th scope="col">총합</th>
+              </tr>
+
+            </thead>
+            <tbody>
+              <tr v-for="c in cart" class="text-center">
+                <th class="font-weight-bold">
+                  <img :src="c.photo" width="40">
+                  [[ c.name ]]
+                </th>
+
+                <td>₩[[ c.price|tc ]] </td>
+                <td>[[ c.count ]]</td>
+                <td>₩[[ c.price * c.count | tc ]]</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="row text-center w-100">
+            <div class="col-12">
+              <p class="mt-4  font-weight-bold text-lg">총 결제금액 : ₩[[total|tc]]</p>
+              <button class="btn btn-success"  @click="place_order">결제 하기</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let vm = new Vue({
+    delimiters: ['[[', ']]'],
+    el: '#vue_div',
+    data: {
+      cart: [],
+      total: 0
+
+    },
+    mounted() {
+        this.get_cart_item();
+    },
+    methods: {
+      get_cart_item: function () {
+          let cart_items = window.sessionStorage.getItem("cart");
+          if (cart_items != null) {
+            this.cart =JSON.parse(cart_items);
+          }
+          for (let i =0; this.cart.length ; i++) {
+              this.total += this.cart[i].count * this.cart[i].price;
+          }
+      },
+      place_order: function () {
+        axios.post(`/api/order/done`, this.cart
+        ).then(function (response) {
+          window.location.href = "/";
+        }).catch(function (e) {
+          if (e.response.status === 422) {
+            alert(e.response.data.detail[0].msg);
+          } else {
+            alert(e.response.data.msg);
+          }
+        }).finally(function () {
+        });
+      }
+    },
+    filters: {
+          tc: function (v) {
+            return !v ? v : v.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+          },
+        }
+})
+</script>
+<script language="JavaScript">
+
+</script>
+
+{% endblock %}
